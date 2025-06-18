@@ -9,10 +9,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-          - name: Set up Ruby for fastlane
+  steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Ruby for fastlane
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.7
+
+    - name: Install fastlane dependencies
+      run: |
+        gem install bundler
+        bundle install
+
 
       - name: Install fastlane dependencies
         run: |
