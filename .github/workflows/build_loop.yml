@@ -8,6 +8,9 @@ jobs:
     name: Build Loop
     runs-on: macos-latest
 
+    env:
+      TEAMID: ${{ secrets.TEAMID }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -15,17 +18,14 @@ jobs:
       - name: Set up Ruby for fastlane
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.1'
+          ruby-version: 2.7
 
       - name: Install fastlane dependencies
         run: |
           gem install bundler
           bundle install
 
-      - name: Configure git access
-        run: git config --global url."https://${{ secrets.GH_PAT }}@github.com/".insteadOf "https://github.com/"
-
-      - name: Run match to fetch certificates
+      - name: Fetch certificates using fastlane lane
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
@@ -34,4 +34,4 @@ jobs:
           FASTLANE_KEY: ${{ secrets.FASTLANE_KEY }}
           TEAMID: ${{ secrets.TEAMID }}
         run: |
-          bundle exec fastlane match appstore --readonly --verbose
+          bundle exec fastlane certs
