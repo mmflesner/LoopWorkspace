@@ -1,4 +1,5 @@
 name: Build Loop
+
 on:
   workflow_dispatch:
 
@@ -6,32 +7,29 @@ jobs:
   build:
     name: Build Loop
     runs-on: macos-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-  steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Ruby for fastlane
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 2.7
-
-    - name: Install fastlane dependencies
-      run: |
-        gem install bundler
-        bundle install
-
+      - name: Set up Ruby for fastlane
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
 
       - name: Install fastlane dependencies
         run: |
           gem install bundler
           bundle install
 
-      - name: Build Loop using fastlane
-        run: bundle exec fastlane build
+      - name: Run match to fetch certificates
         env:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
           FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
-          APP_STORE_CONNECT_API_KEY_PATH: ${{ secrets.APP_STORE_CONNECT_API_KEY_PATH }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.MATCH_PASSWORD }} # hvis du bruker Apple ID
+          FASTLANE_ISSUER_ID: ${{ secrets.FASTLANE_ISSUER_ID }}
+          FASTLANE_KEY_ID: ${{ secrets.FASTLANE_KEY_ID }}
+          FASTLANE_KEY: ${{ secrets.FASTLANE_KEY }}
+          TEAMID: ${{ secrets.TEAMID }}
+        run: |
+          fastlane match appstore --readonly --verbose
